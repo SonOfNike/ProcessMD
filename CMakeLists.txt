@@ -8,6 +8,8 @@ set(WEBSOCKETPP_PATH /home/git_repos/websocketpp)
 
 add_executable(ProcessMD main.cpp
                          MDConnector.cpp
+                         ShmemManager.cpp
+                         MDProcessor.cpp
                          simdjson.cpp)
 
 target_link_libraries(ProcessMD PRIVATE OpenSSL::SSL OpenSSL::Crypto)

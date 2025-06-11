@@ -5,6 +5,9 @@
 #include <iostream>
 #include "simdjson.h"
 #include <string>
+#include "ShmemManager.h"
+#include "MDProcessor.h"
+#include "../Utils/MDupdate.h"
 
 typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
 typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
@@ -18,6 +21,9 @@ public:
     void on_init();
 
 private:
+
+    ShmemManager* mShmemManager;
+    static MDProcessor*  mMDProcessor;
 
     static void on_open(websocketpp::connection_hdl hdl, client* c);
     static void on_message(websocketpp::connection_hdl, client::message_ptr msg);

@@ -1,6 +1,7 @@
 #include "MDConnector.h"
 
 simdjson::dom::parser MDConnector::parser;
+MDProcessor*  MDConnector::mMDProcessor;
 
 void MDConnector::on_open(websocketpp::connection_hdl hdl, client* c) {
     std::cout << "WebSocket connection opened!" << std::endl;
@@ -33,11 +34,13 @@ void MDConnector::on_message(websocketpp::connection_hdl, client::message_ptr ms
                 if(value == "t"){
                     is_MD = true;
                     std::cout << "Received trade" << std::endl;
+                    mMDProcessor->process_trade(obj);
                     continue;
                 }
                 else if(value == "q"){
                     is_MD = true;
                     std::cout << "Received quote" << std::endl;
+                    mMDProcessor->process_quote(obj);
                     continue;
                 }
                 else{
@@ -57,6 +60,13 @@ void MDConnector::on_close(websocketpp::connection_hdl hdl) {
 }
 
 void MDConnector::on_init() {
+
+    mShmemManager = ShmemManager::getInstance();
+    mMDProcessor = MDProcessor::getInstance();
+
+    mShmemManager->startUp();
+    mMDProcessor->startUp();
+    
     try {
         c.set_access_channels(websocketpp::log::alevel::all);
         c.clear_access_channels(websocketpp::log::alevel::frame_payload);
