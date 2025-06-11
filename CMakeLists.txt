@@ -6,7 +6,9 @@ find_package(OpenSSL REQUIRED)
 # Path to the websocketpp library
 set(WEBSOCKETPP_PATH /home/git_repos/websocketpp)
 
-add_executable(ProcessMD main.cpp)
+add_executable(ProcessMD main.cpp
+                         MDConnector.cpp
+                         simdjson.cpp)
 
 target_link_libraries(ProcessMD PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 target_include_directories(ProcessMD PUBLIC

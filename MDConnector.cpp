@@ -1,5 +1,7 @@
 #include "MDConnector.h"
 
+simdjson::dom::parser MDConnector::parser;
+
 void MDConnector::on_open(websocketpp::connection_hdl hdl, client* c) {
     std::cout << "WebSocket connection opened!" << std::endl;
     websocketpp::lib::error_code ec;
