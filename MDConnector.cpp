@@ -62,9 +62,11 @@ void MDConnector::on_close(websocketpp::connection_hdl hdl) {
 void MDConnector::on_init() {
 
     mShmemManager = ShmemManager::getInstance();
+    mSymIDManager = SymbolIDManager::getInstance();
     mMDProcessor = MDProcessor::getInstance();
 
     mShmemManager->startUp();
+    mSymIDManager->startUp();
     mMDProcessor->startUp();
     
     try {

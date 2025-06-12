@@ -3,11 +3,12 @@
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
 #include <iostream>
-#include "simdjson.h"
+#include "../Utils/simdjson/simdjson.h"
 #include <string>
 #include "ShmemManager.h"
 #include "MDProcessor.h"
 #include "../Utils/MDupdate.h"
+#include "../Utils/SymbolIDManager.h"
 
 typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
 typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
@@ -23,6 +24,7 @@ public:
 private:
 
     ShmemManager* mShmemManager;
+    SymbolIDManager* mSymIDManager;
     static MDProcessor*  mMDProcessor;
 
     static void on_open(websocketpp::connection_hdl hdl, client* c);

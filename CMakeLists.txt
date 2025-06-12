@@ -10,7 +10,8 @@ add_executable(ProcessMD main.cpp
                          MDConnector.cpp
                          ShmemManager.cpp
                          MDProcessor.cpp
-                         simdjson.cpp)
+                         ../Utils/SymbolIDManager.cpp
+                         ../Utils/simdjson/simdjson.cpp)
 
 target_link_libraries(ProcessMD PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 target_include_directories(ProcessMD PUBLIC
