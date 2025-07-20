@@ -24,7 +24,7 @@ public:
 private:
 
     ShmemManager* mShmemManager;
-    SymbolIDManager* mSymIDManager;
+    static SymbolIDManager* mSymIDManager;
     static MDProcessor*  mMDProcessor;
 
     static void on_open(websocketpp::connection_hdl hdl, client* c);

@@ -2,6 +2,7 @@
 
 simdjson::dom::parser MDConnector::parser;
 MDProcessor*  MDConnector::mMDProcessor;
+SymbolIDManager*  MDConnector::mSymIDManager;
 
 void MDConnector::on_open(websocketpp::connection_hdl hdl, client* c) {
     std::cout << "WebSocket connection opened!" << std::endl;
@@ -12,11 +13,37 @@ void MDConnector::on_open(websocketpp::connection_hdl hdl, client* c) {
         std::cout << "Failed to get connection pointer: " << ec.message() << std::endl;
         return;
     }
-    auto auth_message_json = R"({"action": "auth", "key": "PKV7EJYKTZ61PJFW19I0", "secret": "OrN7TeuRsE0TtuyjywZoiPbq77V5SdFfUftcxaGM"})"_padded;
+    simdjson::dom::element doc = MDConnector::parser.load("/home/git_repos/Confs/MD_auth.json");
+    std::stringstream ss;
+    ss << R"({"action": "auth", "key": ")" << doc["key"].get_string() << R"(", "secret": ")" << doc["secret"].get_string() << R"("})"_padded;
+    auto auth_message_json = ss.str();
     char *auth_message = auth_message_json.data();
     c->send(con, auth_message, websocketpp::frame::opcode::text);
 
-    auto subscription_message_json = R"({"action":"subscribe","trades":["FAKEPACA"],"quotes":["FAKEPACA"]})"_padded;
+    std::stringstream sub_ss;
+    sub_ss << R"({"action":"subscribe","trades":[)";
+
+    int size_of_map = mSymIDManager->string_to_id.size();
+    
+    int symbol_number = 1;
+    for (const auto & [ key, value ] : mSymIDManager->string_to_id){
+        sub_ss << R"(")" << key << R"(")";
+        if(symbol_number != size_of_map) sub_ss << R"(,)";
+        symbol_number++;
+    }
+
+    sub_ss << R"(],"quotes":[)";
+    symbol_number = 1;
+    for(const auto& pair : mSymIDManager->string_to_id){
+        sub_ss << R"(")" << pair.first << R"(")";
+        if(symbol_number != size_of_map) sub_ss << R"(,)";
+        symbol_number++;
+    }
+
+    sub_ss << R"(]})"_padded;
+
+    auto subscription_message_json = sub_ss.str();
+
     char *subscription_message = subscription_message_json.data();
     c->send(con, subscription_message, websocketpp::frame::opcode::text);
 }
