@@ -49,7 +49,7 @@ void MDConnector::on_open(websocketpp::connection_hdl hdl, client* c) {
 }
 
 void MDConnector::on_message(websocketpp::connection_hdl, client::message_ptr msg) {
-    std::cout << "Received message: " << msg->get_payload() << std::endl;
+    // std::cout << "Received message: " << msg->get_payload() << std::endl;
 
     simdjson::padded_string padded_json_string(msg->get_payload());
 
@@ -60,13 +60,13 @@ void MDConnector::on_message(websocketpp::connection_hdl, client::message_ptr ms
                 std::string_view value = obj["T"].get_string();
                 if(value == "t"){
                     is_MD = true;
-                    std::cout << "Received trade" << std::endl;
+                    // std::cout << "Received trade" << std::endl;
                     mMDProcessor->process_trade(obj);
                     continue;
                 }
                 else if(value == "q"){
                     is_MD = true;
-                    std::cout << "Received quote" << std::endl;
+                    // std::cout << "Received quote" << std::endl;
                     mMDProcessor->process_quote(obj);
                     continue;
                 }

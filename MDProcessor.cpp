@@ -1,5 +1,6 @@
 #include "MDProcessor.h"
 #include "../Utils/Time_functions.h"
+#include "glog/logging.h"
 #include <string>
 #include <string_view>
 
@@ -32,6 +33,7 @@ void MDProcessor::process_quote(simdjson::dom::object _obj){
     //Timestamp conversion
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
+    DLOG(INFO) << "MD|TYPE=QUOTE|TIMESTAMP=" << currentMD.m_timestamp;
 }
     
 void MDProcessor::process_trade(simdjson::dom::object _obj){
@@ -43,4 +45,5 @@ void MDProcessor::process_trade(simdjson::dom::object _obj){
     //Timestamp conversion
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
+    DLOG(INFO) << "MD|TYPE=TRADE|TIMESTAMP=" << currentMD.m_timestamp;
 }
