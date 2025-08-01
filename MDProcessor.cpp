@@ -1,5 +1,6 @@
 #include "MDProcessor.h"
 #include "../Utils/Time_functions.h"
+#include "../Utils/math_functions.h"
 #include "glog/logging.h"
 #include <string>
 #include <string_view>
@@ -25,25 +26,25 @@ void MDProcessor::shutDown(){
 void MDProcessor::process_quote(simdjson::dom::object _obj){
     currentMD.m_type = md_type::QUOTE;
     currentMD.m_symbolId = mSymIDManager->getID(_obj["S"].get_string());
-    currentMD.m_bid_price = Price(_obj["bp"].get_double() * 1000);
-    currentMD.m_ask_price = Price(_obj["ap"].get_double() * 1000);
+    currentMD.m_bid_price = roundToNearestCent(Price(_obj["bp"].get_double() * DOLLAR));
+    currentMD.m_ask_price = roundToNearestCent(Price(_obj["ap"].get_double() * DOLLAR));
     currentMD.m_bid_quant = Shares(_obj["bs"].get_int64() * 100);
     currentMD.m_ask_quant = Shares(_obj["as"].get_int64() * 100);
 
     //Timestamp conversion
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
-    DLOG(INFO) << "MD|TYPE=QUOTE|TIMESTAMP=" << currentMD.m_timestamp;
+    // DLOG(INFO) << "MD|TYPE=QUOTE|TIMESTAMP=" << currentMD.m_timestamp;
 }
     
 void MDProcessor::process_trade(simdjson::dom::object _obj){
     currentMD.m_type = md_type::PRINT;
     currentMD.m_symbolId = mSymIDManager->getID(_obj["S"].get_string());
-    currentMD.m_bid_price = Price(_obj["p"].get_double() * 1000);
+    currentMD.m_bid_price = roundToNearestCent(Price(_obj["p"].get_double() * DOLLAR));
     currentMD.m_bid_quant = Shares(_obj["s"].get_int64() * 100);
 
     //Timestamp conversion
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
-    DLOG(INFO) << "MD|TYPE=TRADE|TIMESTAMP=" << currentMD.m_timestamp;
+    // DLOG(INFO) << "MD|TYPE=TRADE|TIMESTAMP=" << currentMD.m_timestamp;
 }
