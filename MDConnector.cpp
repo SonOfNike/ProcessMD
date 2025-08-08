@@ -54,18 +54,15 @@ void MDConnector::on_message(websocketpp::connection_hdl, client::message_ptr ms
     simdjson::padded_string padded_json_string(msg->get_payload());
 
     for(simdjson::dom::object obj : MDConnector::parser.parse(padded_json_string)){
-        bool is_MD = false;
         for(const auto& key_value : obj) {
             if(key_value.key == "T"){
                 std::string_view value = obj["T"].get_string();
                 if(value == "t"){
-                    is_MD = true;
                     // std::cout << "Received trade" << std::endl;
                     mMDProcessor->process_trade(obj);
                     continue;
                 }
                 else if(value == "q"){
-                    is_MD = true;
                     // std::cout << "Received quote" << std::endl;
                     mMDProcessor->process_quote(obj);
                     continue;

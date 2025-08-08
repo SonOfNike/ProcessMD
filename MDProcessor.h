@@ -12,6 +12,8 @@ private:
     ShmemManager* mShmemManager;
     SymbolIDManager* mSymIDManager;
 
+    const uint64_t NANOS_PER_DAY = 24ULL * 60 * 60 *1000000000ULL;
+
     MDupdate    currentMD;
 
     static MDProcessor* uniqueInstance;
@@ -21,6 +23,6 @@ public:
     static MDProcessor* getInstance();
     void startUp();
     void shutDown();
-    void process_quote(simdjson::dom::object obj);
-    void process_trade(simdjson::dom::object obj);
+    void process_quote(const simdjson::dom::object& obj);
+    void process_trade(const simdjson::dom::object& obj);
 };

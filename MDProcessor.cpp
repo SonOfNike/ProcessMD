@@ -4,6 +4,9 @@
 #include "glog/logging.h"
 #include <string>
 #include <string_view>
+#include <ctime>
+#include <cstdint>
+#include <iostream>
 
 MDProcessor* MDProcessor::uniqueInstance = nullptr;
 
@@ -23,7 +26,7 @@ void MDProcessor::shutDown(){
     
 }
 
-void MDProcessor::process_quote(simdjson::dom::object _obj){
+void MDProcessor::process_quote(const simdjson::dom::object& _obj){
     currentMD.m_type = md_type::QUOTE;
     currentMD.m_symbolId = mSymIDManager->getID(_obj["S"].get_string());
     currentMD.m_bid_price = roundToNearestCent(Price(_obj["bp"].get_double() * DOLLAR));
@@ -34,10 +37,18 @@ void MDProcessor::process_quote(simdjson::dom::object _obj){
     //Timestamp conversion
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
+
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    uint64_t nanos = uint64_t(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
+
+    if((nanos % NANOS_PER_DAY) - currentMD.m_timestamp > 500000000)
+        std::cout << "Latency=" << (nanos % NANOS_PER_DAY) - currentMD.m_timestamp << 
+        "|CurrentTime=" << currentMD.m_timestamp << "\n"; 
     // DLOG(INFO) << "MD|TYPE=QUOTE|TIMESTAMP=" << currentMD.m_timestamp;
 }
     
-void MDProcessor::process_trade(simdjson::dom::object _obj){
+void MDProcessor::process_trade(const simdjson::dom::object& _obj){
     currentMD.m_type = md_type::PRINT;
     currentMD.m_symbolId = mSymIDManager->getID(_obj["S"].get_string());
     currentMD.m_bid_price = roundToNearestCent(Price(_obj["p"].get_double() * DOLLAR));
@@ -46,5 +57,13 @@ void MDProcessor::process_trade(simdjson::dom::object _obj){
     //Timestamp conversion
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
+
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    uint64_t nanos = uint64_t(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
+
+    if((nanos % NANOS_PER_DAY) - currentMD.m_timestamp > 500000000)
+        std::cout << "Latency=" << (nanos % NANOS_PER_DAY) - currentMD.m_timestamp << 
+        "|CurrentTime=" << currentMD.m_timestamp << "\n"; 
     // DLOG(INFO) << "MD|TYPE=TRADE|TIMESTAMP=" << currentMD.m_timestamp;
 }
