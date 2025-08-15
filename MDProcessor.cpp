@@ -38,13 +38,13 @@ void MDProcessor::process_quote(const simdjson::dom::object& _obj){
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
 
-    timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    uint64_t nanos = uint64_t(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
+    // timespec ts;
+    // clock_gettime(CLOCK_REALTIME, &ts);
+    // uint64_t nanos = uint64_t(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
 
-    if((nanos % NANOS_PER_DAY) - currentMD.m_timestamp > 500000000)
-        std::cout << "Latency=" << (nanos % NANOS_PER_DAY) - currentMD.m_timestamp << 
-        "|CurrentTime=" << currentMD.m_timestamp << "\n"; 
+    // if((nanos % NANOS_PER_DAY) - currentMD.m_timestamp > 400000000)
+    //     std::cout << "Latency=" << (nanos % NANOS_PER_DAY) - currentMD.m_timestamp << 
+    //     "|CurrentTime=" << currentMD.m_timestamp << "\n"; 
     // DLOG(INFO) << "MD|TYPE=QUOTE|TIMESTAMP=" << currentMD.m_timestamp;
 }
     
@@ -58,12 +58,12 @@ void MDProcessor::process_trade(const simdjson::dom::object& _obj){
     currentMD.m_timestamp = parse_timestring(_obj["t"].get_string());
     mShmemManager->write_MD(currentMD);
 
-    timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    uint64_t nanos = uint64_t(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
+    // timespec ts;
+    // clock_gettime(CLOCK_REALTIME, &ts);
+    // uint64_t nanos = uint64_t(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
 
-    if((nanos % NANOS_PER_DAY) - currentMD.m_timestamp > 500000000)
-        std::cout << "Latency=" << (nanos % NANOS_PER_DAY) - currentMD.m_timestamp << 
-        "|CurrentTime=" << currentMD.m_timestamp << "\n"; 
+    // if((nanos % NANOS_PER_DAY) - currentMD.m_timestamp > 400000000)
+    //     std::cout << "Latency=" << (nanos % NANOS_PER_DAY) - currentMD.m_timestamp << 
+    //     "|CurrentTime=" << currentMD.m_timestamp << "\n"; 
     // DLOG(INFO) << "MD|TYPE=TRADE|TIMESTAMP=" << currentMD.m_timestamp;
 }

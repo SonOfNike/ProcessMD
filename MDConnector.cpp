@@ -13,7 +13,7 @@ void MDConnector::on_open(websocketpp::connection_hdl hdl, client* c) {
         std::cout << "Failed to get connection pointer: " << ec.message() << std::endl;
         return;
     }
-    simdjson::dom::element doc = MDConnector::parser.load("/home/git_repos/Confs/MD_auth.json");
+    simdjson::dom::element doc = MDConnector::parser.load("/home/git_repos/Confs/LIVE_auth.json");
     std::stringstream ss;
     ss << R"({"action": "auth", "key": ")" << doc["key"].get_string() << R"(", "secret": ")" << doc["secret"].get_string() << R"("})"_padded;
     auto auth_message_json = ss.str();
